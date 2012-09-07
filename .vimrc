@@ -61,6 +61,9 @@ Bundle 'taglist.vim'
 " Conflicts with nerdtree. Not too useful anyway
 " Bundle 'vim-signature'
 
+Bundle 'sjl/gundo.vim'
+nnoremap <F5> :GundoToggle<CR>
+
 filetype plugin indent on     " required!
 "=====Vundler====>
 
@@ -200,3 +203,8 @@ noremap <Leader>P "+P
 
 " :foo => :bar ==========> foo: :bar
 noremap <Leader>r=>: :s/:\(\S*\) =>/\1:/g<CR>
+
+" fix damn search
+set ignorecase
+set smartcase
+set incsearch
