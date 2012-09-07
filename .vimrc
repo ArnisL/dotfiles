@@ -32,7 +32,7 @@ Bundle 'Lokaltog/vim-easymotion'
 Bundle 'LustyJuggler'
 Bundle 'Lokaltog/vim-powerline'
 Bundle 'tpope/vim-repeat'
-Bundle 'extradite.vim'
+" Bundle 'extradite.vim'
 Bundle 'tpope/vim-surround'
 Bundle 'Syntastic'
 Bundle 'tpope/vim-fugitive'
@@ -46,17 +46,12 @@ nnoremap <Leader>s viwy:Ack<Space><C-r>"<Cr>
 
 Bundle 'wombat256.vim'
 colorscheme wombat256mod
-Bundle 'ZoomWin'
 
 Bundle 'The-NERD-tree'
 nmap <A-L> :NERDTreeFind<CR>
 
-Bundle 'TaskList.vim'
-
 " Bundle 'session.vim'
-Bundle 'xolox/vim-session'
-
-Bundle 'taglist.vim'
+" Bundle 'xolox/vim-session'
 
 " Conflicts with nerdtree. Not too useful anyway
 " Bundle 'vim-signature'
@@ -208,3 +203,4 @@ noremap <Leader>r=>: :s/:\(\S*\) =>/\1:/g<CR>
 set ignorecase
 set smartcase
 set incsearch
+
