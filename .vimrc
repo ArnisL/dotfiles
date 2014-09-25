@@ -1,34 +1,252 @@
-syntax on
-set autoread
-set nocompatible
-set nowrap
+" === Important ===
+  set fileformats=unix,mac,dos
+  if &term =~ '^screen'
+    execute "set t_kP=\e[5;*~"
+    execute "set t_kN=\e[6;*~"
+    execute "set <xUp>=\e[1;*A"
+    execute "set <xDown>=\e[1;*B"
+    execute "set <xRight>=\e[1;*C"
+    execute "set <xLeft>=\e[1;*D"
+  endif
 
-set backspace=2 " make backspace work like most other apps
+  syntax on
+  set linespace=0
+  set autoread
+  set nocompatible
+  set nowrap
+  set backspace=2 " make backspace work like most other apps
 
-"<====Vundler=====
-filetype off " required!
-set rtp+=~/.vim/vundle.git/ 
-call vundle#rc()
+  " vundler config
+  filetype off
+  set rtp+=~/.vim/bundle/Vundle.vim
+  call vundle#begin()
+  Plugin 'gmarik/Vundle.vim'
 
-Bundle 'wombat256.vim'
-set t_Co=256
-colorscheme wombat256mod
-hi SignColumn ctermbg=none guibg=none
+" === Moving around, searching and patterns ===
 
-"Bundle 'PSearch'
-"Bundle 'wikitopian/hardmode'
-Bundle 'ag.vim'
-Bundle 'ArnisL/grepqf.vim'
-Bundle 'tyru/current-func-info.vim'
+" === Tags ===
 
-Bundle 'matchit.zip'
-Bundle 'tpope/vim-speeddating'
+" === Displaying text ===
 
-Bundle 'ExplainPattern'
-Bundle 'vim-multiedit'
-Bundle 'ervandew/screen'
-Bundle 'tomtom/quickfixsigns_vim'
-Bundle 'kien/ctrlp.vim'
+" === Syntax, highlighting and spelling ===
+  Plugin 'wombat256.vim'
+  Plugin 'kchmck/vim-coffee-script'
+  au BufNewFile,BufRead *.coffee setf coffee
+  Plugin 'mintplant/vim-literate-coffeescript'
+  Plugin 'tpope/vim-markdown'
+  Plugin 'nono/vim-handlebars'
+
+  " Lightline <<
+    Plugin 'itchyny/lightline.vim'
+    "\ 'colorscheme': 'wombat',
+    let g:lightline = {
+          \ 'active': {
+          \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ], ['ctrlpmark'] ],
+          \   'right': [ [ 'syntastic', 'lineinfo' ], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
+          \ },
+          \ 'component_function': {
+          \   'fugitive': 'MyFugitive',
+          \   'filename': 'MyFilename',
+          \   'fileformat': 'MyFileformat',
+          \   'filetype': 'MyFiletype',
+          \   'fileencoding': 'MyFileencoding',
+          \   'mode': 'MyMode',
+          \   'ctrlpmark': 'CtrlPMark',
+          \ },
+          \ 'component_expand': {
+          \   'syntastic': 'SyntasticStatuslineFlag',
+          \ },
+          \ 'component_type': {
+          \   'syntastic': 'error',
+          \ },
+          \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
+          \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
+          \ }
+
+    function! MyModified()
+      return &ft =~ 'help' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+    endfunction
+
+    function! MyReadonly()
+      return &ft !~? 'help' && &readonly ? 'RO' : ''
+    endfunction
+
+    function! MyFilename()
+      let fname = expand('%:t')
+      return fname == 'ControlP' ? g:lightline.ctrlp_item :
+            \ fname == '__Tagbar__' ? g:lightline.fname :
+            \ fname =~ '__Gundo\|NERD_tree' ? '' :
+            \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
+            \ &ft == 'unite' ? unite#get_status_string() :
+            \ &ft == 'vimshell' ? vimshell#get_status_string() :
+            \ ('' != MyReadonly() ? MyReadonly() . ' ' : '') .
+            \ ('' != fname ? fname : '[No Name]') .
+            \ ('' != MyModified() ? ' ' . MyModified() : '')
+    endfunction
+
+    function! MyFugitive()
+      try
+        if expand('%:t') !~? 'Tagbar\|Gundo\|NERD' && &ft !~? 'vimfiler' && exists('*fugitive#head')
+          let mark = ''  " edit here for cool mark
+          let _ = fugitive#head()
+          return strlen(_) ? mark._ : ''
+        endif
+      catch
+      endtry
+      return ''
+    endfunction
+
+    function! MyFileformat()
+      return winwidth(0) > 70 ? &fileformat : ''
+    endfunction
+
+    function! MyFiletype()
+      return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
+    endfunction
+
+    function! MyFileencoding()
+      return winwidth(0) > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
+    endfunction
+
+    function! MyMode()
+      let fname = expand('%:t')
+      return fname == '__Tagbar__' ? 'Tagbar' :
+            \ fname == 'ControlP' ? 'CtrlP' :
+            \ fname == '__Gundo__' ? 'Gundo' :
+            \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
+            \ fname =~ 'NERD_tree' ? 'NERDTree' :
+            \ &ft == 'unite' ? 'Unite' :
+            \ &ft == 'vimfiler' ? 'VimFiler' :
+            \ &ft == 'vimshell' ? 'VimShell' :
+            \ winwidth(0) > 60 ? lightline#mode() : ''
+    endfunction
+
+    function! CtrlPMark()
+      if expand('%:t') =~ 'ControlP'
+        call lightline#link('iR'[g:lightline.ctrlp_regex])
+        return lightline#concatenate([g:lightline.ctrlp_prev, g:lightline.ctrlp_item
+              \ , g:lightline.ctrlp_next], 0)
+      else
+        return ''
+      endif
+    endfunction
+
+    let g:ctrlp_status_func = {
+      \ 'main': 'CtrlPStatusFunc_1',
+      \ 'prog': 'CtrlPStatusFunc_2',
+      \ }
+
+    function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
+      let g:lightline.ctrlp_regex = a:regex
+      let g:lightline.ctrlp_prev = a:prev
+      let g:lightline.ctrlp_item = a:item
+      let g:lightline.ctrlp_next = a:next
+      return lightline#statusline(0)
+    endfunction
+
+    function! CtrlPStatusFunc_2(str)
+      return lightline#statusline(0)
+    endfunction
+
+    let g:tagbar_status_func = 'TagbarStatusFunc'
+
+    function! TagbarStatusFunc(current, sort, fname, ...) abort
+        let g:lightline.fname = a:fname
+      return lightline#statusline(0)
+    endfunction
+
+    augroup AutoSyntastic
+      autocmd!
+      autocmd BufWritePost *.c,*.cpp call s:syntastic()
+    augroup END
+    function! s:syntastic()
+      SyntasticCheck
+      call lightline#update()
+    endfunction
+
+    let g:unite_force_overwrite_statusline = 0
+    let g:vimfiler_force_overwrite_statusline = 0
+    let g:vimshell_force_overwrite_statusline = 0
+
+" === Multiple windows ===
+
+" === Multiple tab pages ===
+  Plugin 'Tab-Name'
+  Plugin 'jistr/vim-nerdtree-tabs'
+
+" === Terminal ===
+
+" === Using the mouse ===
+
+" === Printing ===
+
+" === Messages and info ===
+
+" === Selecting text ===
+
+" === Editing text ===
+"Plugin 'Raimondi/delimitMate'
+
+" === Tabs and indenting ===
+
+" === Folding ===
+
+" === Diff mode ===
+
+" === Mapping ===
+
+" === Reading and writing files ===
+
+" === The swap file ===
+
+" === Command line editing ===
+
+" === Executing external commands ===
+  Plugin 'benmills/vimux'
+  let g:VimuxSession = 'test'
+  let g:VimuxRunnerPaneIndex = '0'
+
+  Plugin 'ag.vim'
+
+" === Running make and jumping to errors ===
+
+" === Language specific ===
+
+" === Multi-byte characters ===
+
+" === Various ===
+  ""http://stackoverflow.com/a/1889646/82062
+  "let b:thisdir=expand("%:p:h")
+  "let b:vim=b:thisdir."/.vim"
+  "if (filereadable(b:vim))
+  "    execute "source ".b:vim
+  "endif
+
+Plugin 'vim-ruby/vim-ruby'
+Plugin 'majutsushi/tagbar'
+nmap <F8> :TagbarToggle<CR>
+Plugin 'alpaca-tc/beautify.vim'
+Plugin 'lukaszkorecki/CoffeeTags'
+
+
+
+Plugin 'rails.vim'
+
+
+ 
+Plugin 'yonchu/accelerated-smooth-scroll'
+
+Plugin 'hail2u/vim-css3-syntax'
+Plugin 'matchit.zip'
+Plugin 'tpope/vim-speeddating'
+"Bundle 'tpope/vim-dispatch'
+
+Plugin 'vim-multiedit'
+"Bundle 'ervandew/screen'
+Plugin 'tomtom/quickfixsigns_vim'
+nnoremap <Leader>qf :QuickfixsignsToggle<CR>
+
+Plugin 'kien/ctrlp.vim'
 " Upgrade CtrlP
 let ctrlp_filter_greps = "".
     \ "egrep -iv '\\.(" .
@@ -50,35 +268,41 @@ endif
 let g:ctrlp_user_command = ['.git/', my_ctrlp_git_command, my_ctrlp_user_command]
 nnoremap <c-\> :CtrlP<CR>
 nnoremap <c-\><Leader> :CtrlPModified<CR>
-Bundle 'ctrlp-modified.vim'
+Plugin 'ctrlp-modified.vim'
 
-Bundle 'Lokaltog/vim-easymotion'
-Bundle 'LustyJuggler'
-Bundle 'Lokaltog/vim-powerline'
-Bundle 'tpope/vim-repeat'
+Plugin 'Lokaltog/vim-easymotion'
+Plugin 'LustyJuggler'
+" Bundle 'Lokaltog/vim-powerline'
+Plugin 'tpope/vim-repeat'
 
-Bundle 'int3/vim-extradite'
+Plugin 'int3/vim-extradite'
 
-Bundle 'tpope/vim-surround'
-Bundle 'Syntastic'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-unimpaired'
-Bundle 'tpope/vim-endwise'
-Bundle 'Tabular'
-Bundle 'vimwiki'
-Bundle 'mileszs/ack.vim'
+Plugin 'tpope/vim-surround'
+Plugin 'Syntastic'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-unimpaired'
+Plugin 'tpope/vim-endwise'
+"gļuko šobrīd (!)
+"Bundle 'gregsexton/gitv'
+Plugin 'Tabular'
+Plugin 'vimwiki'
+Plugin 'mileszs/ack.vim'
 let g:ackprg="ack-grep -H --nocolor --nogroup --column"
 " nnoremap <Leader>s viwy:Ack<Space><C-r>"<Cr>
 
-Bundle 'The-NERD-tree'
+Plugin 'The-NERD-tree'
+let g:NERDTreeWinSize=30
+"let g:NERDChristmasTree=1
+let g:NERDTreeMinimalUI=1
+let g:NERDTreeDirArrows=1
 nmap <A-L> :NERDTreeFind<CR>
-nnoremap <Leader>n :NERDTree<CR>
+nnoremap <Leader>n :NERDTreeTabsToggle<CR>
 nnoremap <Leader>cn :NERDTreeClose<CR>
 
 " throws exception: easytree needs vim 7.3 with atleast 569 patchset included
 " Bundle 'easytree.vim'
 
-Bundle 'nviennot/vim-config'
+" Bundle 'nviennot/vim-config'
 
 " Bundle 'session.vim'
 " Bundle 'xolox/vim-session'
@@ -86,17 +310,21 @@ Bundle 'nviennot/vim-config'
 " Conflicts with nerdtree. Not too useful anyway
 " Bundle 'vim-signature'
 
-Bundle 'sjl/gundo.vim'
+Plugin 'sjl/gundo.vim'
 nnoremap <F5> :GundoToggle<CR>
 
-Bundle 'vim-g'
-Bundle 'mattn/pastebin-vim'
-source ~/.set_pastebin_key.vim
+" tell it to use an undo file
+set undofile
+" set a directory to store the undo history
+set undodir=~/.vimundo/
+
+" Bundle 'mattn/pastebin-vim'
+" source ~/.set_pastebin_key.vim
 
 "===NEOCOMPLCACHE
-Bundle 'Shougo/neocomplcache'
+Plugin 'Shougo/neocomplcache'
 " Bundle 'Shougo/neocomplcache-snippets-complete'
-Bundle 'ujihisa/neco-ruby'
+Plugin 'ujihisa/neco-ruby'
 
 let g:neocomplcache_enable_at_startup = 1
 let g:neocomplcache_enable_smart_case = 1
@@ -111,14 +339,27 @@ inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><C-y>  neocomplcache#close_popup()
 inoremap <expr><C-f>  neocomplcache#close_popup()
 inoremap <expr><C-e>  neocomplcache#cancel_popup()
+
+" http://stackoverflow.com/questions/12975098/using-neocomplcache-and-clang-complete
+if !exists('g:neocomplcache_force_omni_patterns')
+    let g:neocomplcache_force_omni_patterns = {}
+endif
+let g:neocomplcache_force_overwrite_completefunc = 1
+let g:neocomplcache_force_omni_patterns.c =
+            \ '[^.[:digit:] *\t]\%(\.\|->\)'
+let g:neocomplcache_force_omni_patterns.cpp =
+            \ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+let g:neocomplcache_force_omni_patterns.objc =
+            \ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+let g:neocomplcache_force_omni_patterns.objcpp =
+            \ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+let g:clang_complete_auto = 0
+let g:clang_auto_select = 0
+let g:clang_use_library = 1
 "===NEOCOMPLCACHE
 
-Bundle 'kchmck/vim-coffee-script'
-Bundle 'mintplant/vim-literate-coffeescript'
-Bundle 'tpope/vim-markdown'
-Bundle 'nono/vim-handlebars'
 
-Bundle 'groenewege/vim-less'
+Plugin 'groenewege/vim-less'
 
 
 au BufNewFile,BufRead *.handlebars,*.hbs,*.html set ft=html syntax=handlebars
@@ -134,36 +375,23 @@ set shiftwidth=2
 set tabstop=2
 set expandtab
 
-"let mapleader = ","
-
 " show line numbers
 set nu
 
 " turn on indentation, set smartindent
 set autoindent
 
-" rspec create context
-inoremap \rc context "" do<Cr>end<Up><Right><Right><Right><Right><Right><Right>
-inoremap \ri it "" do<Cr>end<Up><Right>
-inoremap \rb before {  }<Left><Left>
-inoremap \rlb before doend<Left><Left><Left><Cr><Cr><Up><Space><Space>
-
 inoremap j{ <Space>{<Space><Space>}<Left><Left>
 inoremap jl =
 inoremap jjl <Space>=<Space>
 inoremap j. _
+cnoremap j. _
 inoremap kj <Esc>
 inoremap j; :<Space>
 inoremap j( ()<Left>
 inoremap j[ []<Left>
 inoremap j" ""<Left>
 inoremap kj. k_
-
-cnoremap jl =
-cnoremap jjl <Space>=<Space>
-cnoremap j. _
-cnoremap kj <Esc>
-cnoremap j; :<Space>
 
 set hlsearch
 nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
@@ -187,7 +415,7 @@ set timeout ttimeoutlen=50
 
 " add syntax highlighting for RSpec
 autocmd BufRead *_spec.rb syn keyword rubyRspec describe context it specify it_should_behave_like before after setup subject its shared_examples_for shared_context let
-highlight def link rubyRspec Function
+hi def link rubyRspec Function
 
 " Easy split navigation
 nnoremap <C-h> <C-w>h
@@ -210,15 +438,15 @@ map Q @@
 
 " Toggle invisibles
 " noremap <Leader>i :set list!<CR>
-" set listchars=eol:¬
+set listchars=eol:¬
 
 " Drag Current Line/s Vertically
-noremap <A-j> :m+<CR>
-noremap <A-k> :m-2<CR>
-inoremap <A-j> <Esc>:m+<CR>
-inoremap <A-k> <Esc>:m-2<CR>
-vnoremap <A-j> :m'>+<CR>gv
-vnoremap <A-k> :m-2<CR>gv
+" noremap <A-j> :m+<CR>
+" noremap <A-k> :m-2<CR>
+" inoremap <A-j> <Esc>:m+<CR>
+" inoremap <A-k> <Esc>:m-2<CR>
+" vnoremap <A-j> :m'>+<CR>gv
+" vnoremap <A-k> :m-2<CR>gv
 
 " Resize splits when the window is resized
 au VimResized * exe "normal! \<c-w>="
@@ -237,11 +465,12 @@ nnoremap <Leader>gc :Gcommit<CR>
 nnoremap <Leader>gd :Gdiff<CR>
 nnoremap <Leader>gb :Gblame<CR>
 nnoremap <Leader>gw :Gwrite<CR>
-nnoremap <Leader>g> :Git push origin master<CR>
+nnoremap <Leader>g> :Git push origin<CR>
 nnoremap <Leader>g< :Git stash<CR>:Git pull --rebase<CR>:Git stash pop<CR>
 nnoremap <Leader>gs> :Git stash<CR>
 nnoremap <Leader>gs< :Git stash pop<CR>
 nnoremap <Leader>gl :Glog<CR>
+nnoremap <Leader>g- :Git reset --hard<CR>
 
 " Save your swp files to a less annoying place than the current directory.
 " If you have .vim-swap in the current directory, it'll use that.
@@ -273,75 +502,35 @@ set smartcase
 set incsearch
 
 " color current line background dark green
-hi Cursorline ctermbg=0
+" hi Cursorline ctermbg=8 guifg=#808080
 
 " Only have cursorline in current window
 autocmd WinLeave * set nocursorline
 autocmd WinEnter * set cursorline
 
-" ZMEP project specific short-cuts
 nnoremap <Leader>rl :e log/development.log<CR>
 nnoremap <Leader>cl :!/bin/echo "" > log/development.log<CR>
 
-nnoremap <Leader>t :tabe<CR>
+nnoremap <Leader>ot :tabe<CR>
 nnoremap <Leader>ct :tabc<CR>
 nnoremap <Leader>tw :tabe<CR>:VimwikiIndex<CR>
-nnoremap <Leader>fc :%s/Å¡/š/g<CR>:%s/Ä/ā/g<CR>:%s/Ä«/ī/g<CR>:%s/Å«/ū/g<CR>:%s/Ä/ē/g<CR>:%s/Å/ņ/g<CR>
 
 nnoremap <Leader>yp :let @+ = expand("%")<CR>
 
+" >================vimux cmds
+" Run the current file with rspec
+map <silent> <Leader><CR> :w<CR>:call VimuxRunCommand("rspec ".@% . ':' . line('.'))<CR>
+map <silent> <Leader>a :w<CR>:call VimuxRunCommand("rspec " . bufname("%"))<CR>
 
-"============>Screen commands
-" TODO: save rspec cmd for 're-run' command
-" Attach to screen
-map <Leader>`a :ScreenShellAttach<CR>
-" RSpec line
-map <Leader>`` :w<CR> :call ScreenShellSend("rspec ".@% . ':' . line('.'))<CR>
-imap <Leader>`` <ESC>:w<CR> :call ScreenShellSend("rspec ".@% . ':' . line('.'))<CR>
-" RSpec file
-map <Leader>`g :w<CR> :call ScreenShellSend("rspec --fail-fast ".@%)<CR>
-" RSpec file
-"map <Leader>`ga :w<CR> :call ScreenShellSend("rspec ".@%)<CR>
-" RSpec everything
-map <Leader>`r :call ScreenShellSend("bundle exec rspec")<CR>
-" Rails console test
-map <Leader>`c :call ScreenShellSend("rails c test")<CR>\`toffarl\`\
-" Send exit
-map <Leader>`x :call ScreenShellSend("exit")<CR>
-" Send clear
-map <Leader>`<Leader> :call ScreenShellSend("")<CR>
-" Send selected text
- vnoremap <Leader>`s y:call ScreenShellSend("<C-R>"")<CR>
-" Multi-line send
-vnoremap <Leader>`ms :s/\n/\\n<CR>Vy:call ScreenShellSend("<C-R>"")<CR>u<Space>:nohlsearch<Bar>:echo<CR>
-" Turn off ActiveRecord::Base logging
-map <Leader>`toffarl :call ScreenShellSend("ActiveRecord::Base.logger.level=10")<CR>
-map <Leader>`tonarl :call ScreenShellSend("ActiveRecord::Base.logger.level=0")<CR>
-" Restart damn test console
-map <Leader>`rc :call ScreenShellSend("!!!")<CR>\`c
+" Prompt for a command to run
+map <Leader>i :VimuxPromptCommand<CR>
 
-" RSpec from failed test line
-map <Leader>`1 ^fsy2t::call ScreenShellSend("rspec <C-R>"")<CR>
-" Cant specify line when using Zeus :*(
-" map <Leader><Leader>` :w<CR> :call ScreenShellSend("zeus rspec ".@% . ':' . line('.'))<CR>
-" Reload source file
-map <Leader>`l :w<CR>:call ScreenShellSend("load '".@%."';")<CR>
-imap <Leader>`l <ESC>:w<CR>:call ScreenShellSend("load '".@%."';")<CR>
-" Pry whereami?
-map <Leader>`= :call ScreenShellSend("whereami")<CR>
-" Send next
-map <Leader>`n :call ScreenShellSend("next")<CR>
-" Send q
-map <Leader>`q :call ScreenShellSend("q")<CR>
-" Switch to development environment
-map <Leader>`d :call ScreenShellSend("env development")<CR>
+" Run last command executed by VimuxRunCommand
+map <Leader>` :w<CR>:VimuxRunLastCommand<CR>
 
-imap kjs <ESC>:call ScreenShellSend("<C-r>.")<CR>
-imap kjsu <ESC>:call ScreenShellSend("<C-r>.")<CR>u
-imap kj` <ESC>:w<CR>\``
-" :call ScreenShellSend("rspec ".@% . ':' . line('.'))<CR>
-" TODO: up <cr>
-"map <Leader>`k <ESC>:call ScreenShellSend("<Up>
+" Interrupt any command running in the runner pane
+map <Leader>s :VimuxInterruptRunner<CR>
+" <================vimux cmds
 
 " ==>Breakpoints
 " Delete all
@@ -349,15 +538,14 @@ nnoremap <Leader>`db :call ScreenShellSend("break --delete-all")<CR>
 " List
 nnoremap <Leader>`b :call ScreenShellSend("breakpoints")<CR>
 map <Leader>`ab :w<CR> :call ScreenShellSend("break ".@% . ':' . line('.'))<CR>
-" <""
 "<============Screen commands
+
 nnoremap <Leader>ssx :set syntax=xml<CR>
 nnoremap <Leader>ssr :set syntax=ruby<CR>
 nnoremap <Leader>ssn :set syntax=none<CR>
 
-
 imap kjw <ESC>:w<CR>
-
+imap jI <Space>\|\|<Left>
 
 " Folding
 map <Leader>sfs :set fdm=syntax<CR>
@@ -365,23 +553,11 @@ map <Leader>sfm :set fdm=manual<CR>
 map <Leader>sfi :set fdm=indent<CR>
 " set foldcolumn=1
 " set fdm=syntax
-hi FoldColumn ctermbg=none ctermfg=darkgrey
-hi Folded ctermbg=none ctermfg=darkgrey
-
-hi Search cterm=NONE ctermfg=black ctermbg=yellow
-" map <C-l> :cclose<CR>
-" autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
-hi String		ctermfg=118		cterm=none		guifg=#95e454	gui=italic
-hi Directory ctermfg=118
-
 
 map <Leader>c :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
-hi VimwikiLink ctermfg=190
-hi rubyTodo ctermfg=black ctermbg=190
-hi Search ctermfg=black ctermbg=190
 nmap > ]qzz
 nmap < [qzz
 nmap n nzz
@@ -407,6 +583,12 @@ nmap <leader>mO O<Esc>:MultieditAddMark i<CR>
 nmap <leader>mA $:MultieditAddMark a<CR>
 nmap <leader>mI ^:MultieditAddMark i<CR>
 
+nmap <silent> <leader>fi :set foldmethod=indent<CR>
+nmap <silent> <leader>fn :set foldmethod=manual<CR>zE
+nmap zm zmzz
+nmap zr zrzz
+nmap zR zRzz
+
 " Make the current selection/word an edit region
 vmap <leader>m :MultieditAddRegion<CR>  
 nmap <leader>mm viw:MultieditAddRegion<CR>
@@ -430,3 +612,109 @@ nmap <silent> <leader>md :MultieditClear<CR>
 " Unset all regions
 nmap <silent> <leader>mr :MultieditReset<CR>
 " <------------- multiline
+
+"a sleep function which allows vim to wait for the other processes to finish
+com! -complete=command -nargs=+ Sleep call s:Sleep(<q-args>)
+fun! s:Sleep(millisec)
+  let ct = localtime()
+  let dt = 0
+  while dt < (a:millisec/1000)
+    let dt = localtime() - ct
+  endwhile
+endfun
+
+set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusline)
+
+fun! <SID>StripTrailingWhitespaces()
+    let l = line(".")
+    let c = col(".")
+    %s/\s\+$//e
+    call cursor(l, c)
+endfun
+
+autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+
+
+
+
+
+"if ! has('gui_running')
+"    set ttimeoutlen=10
+"    augroup FastEscape
+"        autocmd!
+"        au InsertEnter * set timeoutlen=0
+"        au InsertLeave * set timeoutlen=1000
+"    augroup END
+"endif
+set laststatus=2 " Always display the statusline in all windows
+
+
+
+
+
+" test
+"" Based on
+"runtime colors/ir_black.vim
+"
+"let g:colors_name = "grb256"
+"
+"hi pythonSpaceError ctermbg=red guibg=red
+"
+"hi Comment ctermfg=darkgray
+"
+"hi StatusLine ctermbg=darkgrey ctermfg=white
+"hi StatusLineNC ctermbg=black ctermfg=lightgrey
+"hi VertSplit ctermbg=black ctermfg=lightgrey
+"hi LineNr ctermfg=darkgray
+"hi CursorLine     guifg=NONE        guibg=#121212     gui=NONE      ctermfg=NONE        ctermbg=234
+"hi Function         guifg=#FFD2A7     guibg=NONE        gui=NONE      ctermfg=yellow       ctermbg=NONE        cterm=NONE
+"hi Visual           guifg=NONE        guibg=#262D51     gui=NONE      ctermfg=NONE        ctermbg=236    cterm=NONE
+"
+"hi Error            guifg=NONE        guibg=NONE        gui=undercurl ctermfg=16       ctermbg=red         cterm=NONE     guisp=#FF6C60 " undercurl color
+"hi ErrorMsg         guifg=white       guibg=#FF6C60     gui=BOLD      ctermfg=16       ctermbg=red         cterm=NONE
+"hi WarningMsg       guifg=white       guibg=#FF6C60     gui=BOLD      ctermfg=16       ctermbg=red         cterm=NONE
+"hi SpellBad       guifg=white       guibg=#FF6C60     gui=BOLD      ctermfg=16       ctermbg=160         cterm=NONE
+"
+"" ir_black doesn't highlight operators for some reason
+"hi Operator        guifg=#6699CC     guibg=NONE        gui=NONE      ctermfg=lightblue   ctermbg=NONE        cterm=NONE
+"
+"highlight DiffAdd term=reverse cterm=bold ctermbg=lightgreen ctermfg=16
+"highlight DiffChange term=reverse cterm=bold ctermbg=lightblue ctermfg=16
+"highlight DiffText term=reverse cterm=bold ctermbg=lightgray ctermfg=16
+"highlight DiffDelete term=reverse cterm=bold ctermbg=lightred ctermfg=16
+"
+"highlight PmenuSel ctermfg=16 ctermbg=156
+call vundle#end()
+colorscheme wombat256mod
+set guicolors
+hi FoldColumn ctermbg=none ctermfg=darkgrey guibg=#000000 guifg=darkgrey
+hi Folded ctermbg=none ctermfg=darkgrey guibg=#000000 guifg=darkgrey
+
+hi Search cterm=none ctermfg=black ctermbg=yellow gui=none guifg=black guibg=yellow
+hi String		ctermfg=118		cterm=none	guifg=#95e454	gui=italic
+hi Directory ctermfg=118 guifg=#95e454 guifg=#95e454
+
+hi VimwikiLink ctermfg=190 guifg=#dfff00
+hi rubyTodo ctermfg=black ctermbg=190 guifg=black guibg=#dfff00
+hi Search ctermfg=black ctermbg=190 guifg=black guibg=#dfff00
+hi SignColumn ctermbg=none guibg=#000000
+
+hi TabLine ctermfg=246 ctermbg=none cterm=none guifg=#949494 guibg=#000000 gui=none
+hi TabLineSel ctermfg=118 ctermbg=none guifg=#87ff00 guibg=#000000
+hi Title ctermfg=none ctermbg=none guifg=#000000 guibg=#000000
+hi TabLineFill ctermfg=none ctermbg=none cterm=none guifg=#000000 guibg=#000000 gui=none
+hi Search ctermfg=232 guifg=#080808
+hi Normal ctermbg=none guibg=#000000
+hi LineNr ctermbg=none guibg=#000000
+
+
+hi DiffAdd ctermbg=118 ctermfg=232 cterm=bold guibg=#87ff00 guifg=#080808 gui=bold
+hi DiffDelete ctermbg=Red ctermfg=232 cterm=bold guibg=Red guifg=#080808
+hi DiffText ctermbg=190 ctermfg=232 guibg=#dfff00 guifg=#080808
+" DiffChange DiffText
+hi VertSplit ctermbg=none guibg=#000000
+hi CursorLine ctermbg=235 guibg=#262626
+hi NERDTreeExecFile ctermfg=232
+
+"olive green
+"guibg=#4E9A06
