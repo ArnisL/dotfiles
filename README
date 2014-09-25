@@ -1,0 +1,2 @@
+gem install ripper-tags
+ripper-tags -R
