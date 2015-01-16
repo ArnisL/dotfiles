@@ -1,5 +1,10 @@
 " === Important ===
-  set fileformats=unix,mac,dos
+  " Necessary for true color support:
+  " :h xterm-true-color
+  set guicolors
+  execute "set t_8f=\e[38;2;%lu;%lu;%lum"
+  execute "set t_8b=\e[48;2;%lu;%lu;%lum"
+
   if &term =~ '^screen'
     execute "set t_kP=\e[5;*~"
     execute "set t_kN=\e[6;*~"
@@ -23,16 +28,34 @@
   Plugin 'gmarik/Vundle.vim'
 
 " === Moving around, searching and patterns ===
+Plugin 'The-NERD-tree'
+let g:NERDTreeWinSize=30
+"let g:NERDChristmasTree=1
+let g:NERDTreeMinimalUI=1
+let g:NERDTreeDirArrows=1
+nmap <A-L> :NERDTreeFind<CR>
+nnoremap <Leader>n :NERDTreeTabsToggle<CR>
+nnoremap <Leader>cn :NERDTreeClose<CR>
+let NERDTreeIgnore = ['^log', '^tmp', '^script', '^doc$', '^public']
+
+" throws exception: easytree needs vim 7.3 with atleast 569 patchset included
+" Bundle 'easytree.vim'
 
 " === Tags ===
 
 " === Displaying text ===
 
 " === Syntax, highlighting and spelling ===
+  Plugin 'slim-template/vim-slim'
+  au BufNewFile,BufRead *.slim setf slim
+
+  filetype plugin indent on
   Plugin 'wombat256.vim'
   Plugin 'kchmck/vim-coffee-script'
   au BufNewFile,BufRead *.coffee setf coffee
+  au BufNewFile,BufRead *.coffee set syntax=coffee
   Plugin 'mintplant/vim-literate-coffeescript'
+  au BufNewFile,BufRead *.less set syntax=less
   Plugin 'tpope/vim-markdown'
   Plugin 'nono/vim-handlebars'
 
@@ -190,6 +213,19 @@
 " === Tabs and indenting ===
 
 " === Folding ===
+" Folding
+map <Leader>sfs :set fdm=syntax<CR>
+map <Leader>sfm :set fdm=manual<CR>
+map <Leader>sfi :set fdm=indent<CR>
+" set foldcolumn=1
+" set fdm=syntax
+
+" Fold shit above & below
+:vnoremap <Leader>za <Esc>`<kzfgg`>jzfG`<
+
+nmap <silent> <leader>fi :set foldmethod=indent<CR>
+nmap <silent> <leader>fn :set foldmethod=manual<CR>zE
+
 
 " === Diff mode ===
 
@@ -215,6 +251,10 @@
 " === Multi-byte characters ===
 
 " === Various ===
+
+" Plugin 'gorkunov/smartgf.vim'
+" let g:smartgf_enable_gems_search = 1
+
   ""http://stackoverflow.com/a/1889646/82062
   "let b:thisdir=expand("%:p:h")
   "let b:vim=b:thisdir."/.vim"
@@ -222,19 +262,16 @@
   "    execute "source ".b:vim
   "endif
 
-Plugin 'vim-ruby/vim-ruby'
+"Plugin 'vim-ruby/vim-ruby'
 Plugin 'majutsushi/tagbar'
 nmap <F8> :TagbarToggle<CR>
-Plugin 'alpaca-tc/beautify.vim'
+"Plugin 'alpaca-tc/beautify.vim'
+"kko gļučī npm
 Plugin 'lukaszkorecki/CoffeeTags'
-
-
 
 Plugin 'rails.vim'
 
-
- 
-Plugin 'yonchu/accelerated-smooth-scroll'
+"Plugin 'yonchu/accelerated-smooth-scroll'
 
 Plugin 'hail2u/vim-css3-syntax'
 Plugin 'matchit.zip'
@@ -277,30 +314,18 @@ Plugin 'tpope/vim-repeat'
 
 Plugin 'int3/vim-extradite'
 
-Plugin 'tpope/vim-surround'
+" Plugin 'tpope/vim-surround'
 Plugin 'Syntastic'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-unimpaired'
 Plugin 'tpope/vim-endwise'
 "gļuko šobrīd (!)
-"Bundle 'gregsexton/gitv'
+" Plugin 'gregsexton/gitv'
 Plugin 'Tabular'
 Plugin 'vimwiki'
 Plugin 'mileszs/ack.vim'
 let g:ackprg="ack-grep -H --nocolor --nogroup --column"
 " nnoremap <Leader>s viwy:Ack<Space><C-r>"<Cr>
-
-Plugin 'The-NERD-tree'
-let g:NERDTreeWinSize=30
-"let g:NERDChristmasTree=1
-let g:NERDTreeMinimalUI=1
-let g:NERDTreeDirArrows=1
-nmap <A-L> :NERDTreeFind<CR>
-nnoremap <Leader>n :NERDTreeTabsToggle<CR>
-nnoremap <Leader>cn :NERDTreeClose<CR>
-
-" throws exception: easytree needs vim 7.3 with atleast 569 patchset included
-" Bundle 'easytree.vim'
 
 " Bundle 'nviennot/vim-config'
 
@@ -433,9 +458,6 @@ augroup AutoReloadVimRC
   au BufWritePost $MYVIMRC so $MYVIMRC
 augroup END
 
-" Map Q to repeat the last recorded macro
-map Q @@
-
 " Toggle invisibles
 " noremap <Leader>i :set list!<CR>
 set listchars=eol:¬
@@ -465,10 +487,6 @@ nnoremap <Leader>gc :Gcommit<CR>
 nnoremap <Leader>gd :Gdiff<CR>
 nnoremap <Leader>gb :Gblame<CR>
 nnoremap <Leader>gw :Gwrite<CR>
-nnoremap <Leader>g> :Git push origin<CR>
-nnoremap <Leader>g< :Git stash<CR>:Git pull --rebase<CR>:Git stash pop<CR>
-nnoremap <Leader>gs> :Git stash<CR>
-nnoremap <Leader>gs< :Git stash pop<CR>
 nnoremap <Leader>gl :Glog<CR>
 nnoremap <Leader>g- :Git reset --hard<CR>
 
@@ -485,9 +503,6 @@ set directory+=.
 
 :nnoremap <Leader>it "=strftime("[%H:%M] ")<CR>P
 :nnoremap <Leader>id "=strftime("%a %d, %b %Y ")<CR>P
-
-" Fold shit above & below
-:vnoremap <Leader>za <Esc>`<kzfgg`>jzfG`<
 
 vnoremap <Leader>y "+y
 noremap <Leader>p "+p
@@ -519,8 +534,8 @@ nnoremap <Leader>yp :let @+ = expand("%")<CR>
 
 " >================vimux cmds
 " Run the current file with rspec
-map <silent> <Leader><CR> :w<CR>:call VimuxRunCommand("rspec ".@% . ':' . line('.'))<CR>
-map <silent> <Leader>a :w<CR>:call VimuxRunCommand("rspec " . bufname("%"))<CR>
+map <silent> <Leader><CR> :w<CR>:call VimuxRunCommand("spec ".@% . ':' . line('.'))<CR>
+map <silent> <Leader>a :w<CR>:call VimuxRunCommand("spec " . bufname("%"))<CR>
 
 " Prompt for a command to run
 map <Leader>i :VimuxPromptCommand<CR>
@@ -546,13 +561,6 @@ nnoremap <Leader>ssn :set syntax=none<CR>
 
 imap kjw <ESC>:w<CR>
 imap jI <Space>\|\|<Left>
-
-" Folding
-map <Leader>sfs :set fdm=syntax<CR>
-map <Leader>sfm :set fdm=manual<CR>
-map <Leader>sfi :set fdm=indent<CR>
-" set foldcolumn=1
-" set fdm=syntax
 
 map <Leader>c :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
@@ -582,9 +590,6 @@ nmap <leader>mO O<Esc>:MultieditAddMark i<CR>
 " Insert a marker at the end/start of a line
 nmap <leader>mA $:MultieditAddMark a<CR>
 nmap <leader>mI ^:MultieditAddMark i<CR>
-
-nmap <silent> <leader>fi :set foldmethod=indent<CR>
-nmap <silent> <leader>fn :set foldmethod=manual<CR>zE
 nmap zm zmzz
 nmap zr zrzz
 nmap zR zRzz
@@ -713,8 +718,21 @@ hi DiffDelete ctermbg=Red ctermfg=232 cterm=bold guibg=Red guifg=#080808
 hi DiffText ctermbg=190 ctermfg=232 guibg=#dfff00 guifg=#080808
 " DiffChange DiffText
 hi VertSplit ctermbg=none guibg=#000000
-hi CursorLine ctermbg=235 guibg=#262626
+" hi CursorLine ctermbg=235 guibg=#262626
 hi NERDTreeExecFile ctermfg=232
+hi CursorLine ctermbg=none guibg=black
+
+hi markdownH1  guifg=#ffffff
+hi markdownH2  guifg=#ffffff
+hi markdownH3  guifg=#ffffff
 
 "olive green
 "guibg=#4E9A06
+
+set cc=80
+highlight ColorColumn guibg=#393733
+"highlight OverLength guibg=#040404
+"match OverLength /\%81v.\+/
+hi String     guifg=#b1d631
+"hi Identifier guifg=#b1d631
+"hi Boolean    guifg=#b1d631 

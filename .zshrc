@@ -1,5 +1,6 @@
 #export TERM="screen-256color"
 #TERM="screen-256color"
+#TERM="xterm"
 
 ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="af-magic"
@@ -116,13 +117,23 @@ if [ ! -z $VLESS ]; then
   alias less=$VLESS
 fi
 
-alias tmux='TERM=screen-256color tmux'
+alias tmux='TERM=xterm-256color tmux'
+
+alias activitydate_staging_log="ssh -p 22209 rails@92.240.69.38 -t 'tail -f staging/current/log/staging.log;bash -l'"
+alias activitydate_production_log="ssh rails@151.236.218.190 -t 'tail -f production/current/log/production.log;bash -l'"
+
+alias activitydate_staging="ssh -p 22209 rails@92.240.69.38 -t 'cd staging/current;bash -l'"
+alias activitydate_production="ssh rails@151.236.218.190 -t 'cd production/current;bash -l'"
+alias steal_activitydate_production_db="rm ~/db.sql ; cd ~/code/activitydate/ && rake db:drop && rake db:create && ssh activitydate -t 'cd production/current && pg_dump -O activitydate_production > ~/db.sql && exit;bash -l' && scp ssh activitydate:~/db.sql ~/ ; ssh activitydate -t 'rm ~/db.sql ; exit;bash -l' ; echo 'Password: postgres' ; echo 'Execute manually:' ; echo 'psql activitydate_development < /home/lapsa/db.sql && exit' ; su postgres"
 
 export EDITOR='vim'
 alias nyan='telnet -t vtnt nyancat.dakko.us'
 #alias rspec_dots='alias rspec="rspec -f p"'
 #alias rspec_nodots='alias rspec="rspec"'
-alias rspec='spring rspec'
+#alias rspec='spring rspec'
+#alias spec='spring rspec'
+alias spec='rspec'
+
 gitCheckout() {
     git checkout $1 && bundle
 }
