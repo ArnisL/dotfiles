@@ -5,7 +5,7 @@
 ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="af-magic"
 
-source ~/scripts/antigen.zsh
+source ~/scripts/.antigen.zsh
 antigen use oh-my-zsh
 
 #antigen bundle git
