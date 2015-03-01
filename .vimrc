@@ -28,18 +28,19 @@
   Plugin 'gmarik/Vundle.vim'
 
 " === Moving around, searching and patterns ===
-Plugin 'The-NERD-tree'
-let g:NERDTreeWinSize=30
-"let g:NERDChristmasTree=1
-let g:NERDTreeMinimalUI=1
-let g:NERDTreeDirArrows=1
-nmap <A-L> :NERDTreeFind<CR>
-nnoremap <Leader>n :NERDTreeTabsToggle<CR>
-nnoremap <Leader>cn :NERDTreeClose<CR>
-let NERDTreeIgnore = ['^log', '^tmp', '^script', '^doc$', '^public']
+  Plugin 'The-NERD-tree'
+  let g:NERDTreeWinSize=30
+  "let g:NERDChristmasTree=1
+  let g:NERDTreeMinimalUI=1
+  let g:NERDTreeDirArrows=1
+  nmap <A-L> :NERDTreeFind<CR>
+  nnoremap <Leader>n :NERDTreeTabsToggle<CR>
+  nnoremap <Leader>cn :NERDTreeClose<CR>
+  "let NERDTreeIgnore = ['^bin', '^log', '^tmp', '^public', '^script', '^doc$']
+  let NERDTreeIgnore = ['^bin', '^log', '^tmp', '^public', '^doc$']
 
-" throws exception: easytree needs vim 7.3 with atleast 569 patchset included
-" Bundle 'easytree.vim'
+  " throws exception: easytree needs vim 7.3 with atleast 569 patchset included
+  " Bundle 'easytree.vim'
 
 " === Tags ===
 
@@ -49,7 +50,6 @@ let NERDTreeIgnore = ['^log', '^tmp', '^script', '^doc$', '^public']
   Plugin 'slim-template/vim-slim'
   au BufNewFile,BufRead *.slim setf slim
 
-  filetype plugin indent on
   Plugin 'wombat256.vim'
   Plugin 'kchmck/vim-coffee-script'
   au BufNewFile,BufRead *.coffee setf coffee
@@ -240,7 +240,7 @@ nmap <silent> <leader>fn :set foldmethod=manual<CR>zE
 " === Executing external commands ===
   Plugin 'benmills/vimux'
   let g:VimuxSession = 'test'
-  let g:VimuxRunnerPaneIndex = '0'
+  let g:VimuxRunnerPaneIndex = '1'
 
   Plugin 'ag.vim'
 
@@ -280,8 +280,12 @@ Plugin 'tpope/vim-speeddating'
 
 Plugin 'vim-multiedit'
 "Bundle 'ervandew/screen'
-Plugin 'tomtom/quickfixsigns_vim'
-nnoremap <Leader>qf :QuickfixsignsToggle<CR>
+
+"Plugin 'tomtom/quickfixsigns_vim'
+"nnoremap <Leader>qf :QuickfixsignsToggle<CR>
+Plugin 'airblade/vim-gitgutter'
+nmap ]h <Plug>GitGutterNextHunk
+nmap [h <Plug>GitGutterPrevHunk
 
 Plugin 'kien/ctrlp.vim'
 " Upgrade CtrlP
@@ -323,6 +327,8 @@ Plugin 'tpope/vim-endwise'
 " Plugin 'gregsexton/gitv'
 Plugin 'Tabular'
 Plugin 'vimwiki'
+let g:vimwiki_list = [{'path': '~/.vimwiki/'}]
+
 Plugin 'mileszs/ack.vim'
 let g:ackprg="ack-grep -H --nocolor --nogroup --column"
 " nnoremap <Leader>s viwy:Ack<Space><C-r>"<Cr>
@@ -488,6 +494,7 @@ nnoremap <Leader>gd :Gdiff<CR>
 nnoremap <Leader>gb :Gblame<CR>
 nnoremap <Leader>gw :Gwrite<CR>
 nnoremap <Leader>gl :Glog<CR>
+nnoremap <Leader>gp :Gpush<CR>
 nnoremap <Leader>g- :Git reset --hard<CR>
 
 " Save your swp files to a less annoying place than the current directory.
@@ -534,8 +541,8 @@ nnoremap <Leader>yp :let @+ = expand("%")<CR>
 
 " >================vimux cmds
 " Run the current file with rspec
-map <silent> <Leader><CR> :w<CR>:call VimuxRunCommand("spec ".@% . ':' . line('.'))<CR>
-map <silent> <Leader>a :w<CR>:call VimuxRunCommand("spec " . bufname("%"))<CR>
+map <silent> <Leader><CR> :w<CR>:call VimuxRunCommand("rspec ".@% . ':' . line('.'))<CR>
+map <silent> <Leader>a :w<CR>:call VimuxRunCommand("rspec " . bufname("%"))<CR>
 
 " Prompt for a command to run
 map <Leader>i :VimuxPromptCommand<CR>
@@ -560,6 +567,7 @@ nnoremap <Leader>ssr :set syntax=ruby<CR>
 nnoremap <Leader>ssn :set syntax=none<CR>
 
 imap kjw <ESC>:w<CR>
+imap kjwq <ESC>:wq<CR>
 imap jI <Space>\|\|<Left>
 
 map <Leader>c :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
@@ -690,37 +698,43 @@ set laststatus=2 " Always display the statusline in all windows
 "
 "highlight PmenuSel ctermfg=16 ctermbg=156
 call vundle#end()
+filetype plugin indent on
 colorscheme wombat256mod
 set guicolors
-hi FoldColumn ctermbg=none ctermfg=darkgrey guibg=#000000 guifg=darkgrey
-hi Folded ctermbg=none ctermfg=darkgrey guibg=#000000 guifg=darkgrey
+hi FoldColumn ctermbg=none ctermfg=darkgrey guibg=#002B36 guifg=darkgrey
+hi Folded ctermbg=none ctermfg=darkgrey guibg=#002B36 guifg=darkgrey
 
 hi Search cterm=none ctermfg=black ctermbg=yellow gui=none guifg=black guibg=yellow
-hi String		ctermfg=118		cterm=none	guifg=#95e454	gui=italic
-hi Directory ctermfg=118 guifg=#95e454 guifg=#95e454
+"hi String		ctermfg=118		cterm=none	guifg=#95e454	gui=italic
+"hi Directory ctermfg=118 guifg=#95e454 guifg=#95e454
+hi Directory ctermfg=118 guifg=#95e454 guifg=#9BD65C
 
 hi VimwikiLink ctermfg=190 guifg=#dfff00
 hi rubyTodo ctermfg=black ctermbg=190 guifg=black guibg=#dfff00
 hi Search ctermfg=black ctermbg=190 guifg=black guibg=#dfff00
-hi SignColumn ctermbg=none guibg=#000000
+hi SignColumn ctermbg=none guibg=#002B36
 
-hi TabLine ctermfg=246 ctermbg=none cterm=none guifg=#949494 guibg=#000000 gui=none
-hi TabLineSel ctermfg=118 ctermbg=none guifg=#87ff00 guibg=#000000
-hi Title ctermfg=none ctermbg=none guifg=#000000 guibg=#000000
-hi TabLineFill ctermfg=none ctermbg=none cterm=none guifg=#000000 guibg=#000000 gui=none
+hi TabLine ctermfg=246 ctermbg=none cterm=none guifg=#949494 guibg=#002B36 gui=none
+hi TabLineSel ctermfg=118 ctermbg=none guifg=#87ff00 guibg=#002B36
+hi Title ctermfg=none ctermbg=none guifg=#000000 guibg=#002B36
+hi TabLineFill ctermfg=none ctermbg=none cterm=none guifg=#000000 guibg=#002B36 gui=none
 hi Search ctermfg=232 guifg=#080808
-hi Normal ctermbg=none guibg=#000000
-hi LineNr ctermbg=none guibg=#000000
+hi Normal ctermbg=none guibg=#002B36
+hi LineNr ctermbg=none guibg=#002B36
 
 
 hi DiffAdd ctermbg=118 ctermfg=232 cterm=bold guibg=#87ff00 guifg=#080808 gui=bold
 hi DiffDelete ctermbg=Red ctermfg=232 cterm=bold guibg=Red guifg=#080808
 hi DiffText ctermbg=190 ctermfg=232 guibg=#dfff00 guifg=#080808
 " DiffChange DiffText
-hi VertSplit ctermbg=none guibg=#000000
+hi VertSplit ctermbg=none guibg=#002B36
 " hi CursorLine ctermbg=235 guibg=#262626
 hi NERDTreeExecFile ctermfg=232
-hi CursorLine ctermbg=none guibg=black
+" hi CursorLine ctermbg=none guibg=black
+hi CursorLine ctermbg=none guibg=#003340
+hi CursorLine ctermbg=none guibg=#002B36
+
+
 
 hi markdownH1  guifg=#ffffff
 hi markdownH2  guifg=#ffffff
@@ -729,10 +743,18 @@ hi markdownH3  guifg=#ffffff
 "olive green
 "guibg=#4E9A06
 
-set cc=80
-highlight ColorColumn guibg=#393733
+"set cc=80
+"highlight ColorColumn guibg=#003340
+highlight ColorColumn guibg=#002B36
+
 "highlight OverLength guibg=#040404
 "match OverLength /\%81v.\+/
-hi String     guifg=#b1d631
+hi String     guifg=#9BD65C
 "hi Identifier guifg=#b1d631
 "hi Boolean    guifg=#b1d631 
+
+highlight GitGutterAdd guifg=#87ff00
+highlight GitGutterDelete guifg=#FF3333
+
+highlight SyntasticWarningSign guifg=#ffd700
+highlight SyntasticErrorSign guifg=#FF3333
