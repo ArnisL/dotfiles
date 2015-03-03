@@ -414,10 +414,6 @@
   " color current line background dark green
   " hi Cursorline ctermbg=8 guifg=#808080
 
-  " Only have cursorline in current window
-  autocmd WinLeave * set nocursorline
-  autocmd WinEnter * set cursorline
-
   nnoremap <Leader>ot :tabe<CR>
   nnoremap <Leader>ct :tabc<CR>
 
@@ -493,7 +489,7 @@
 
   hi ColorColumn guibg=#002B36
 
-  hi String     guifg=#9BD65C
+  hi String guifg=#9BD65C
 
   hi GitGutterAdd guifg=#87ff00
   hi GitGutterDelete guifg=#FF3333
