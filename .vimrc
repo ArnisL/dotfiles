@@ -39,6 +39,7 @@
   Plugin 'easytree.vim'
   nnoremap <Leader>n :EasyTree<CR>
   let g:easytree_ignore_dirs = ['^bin', '^log', '^tmp', '^public', '^doc$', '^script']
+  nmap <A-L> :exe ':EasyTree '.expand('%:p:h')<CR>
 
   " NERD tree
   "Plugin 'The-NERD-tree'
@@ -300,39 +301,39 @@
   set undofile
   set undodir=~/.vimundo/
 
-  Plugin 'Shougo/neocomplcache'
-    " Bundle 'Shougo/neocomplcache-snippets-complete'
-    Plugin 'ujihisa/neco-ruby'
-    let g:neocomplcache_enable_at_startup = 1
-    let g:neocomplcache_enable_smart_case = 1
-    let g:neocomplcache_enable_auto_select = 1
-    let g:neocomplcache_enable_fuzzy_completion = 1
-    let g:neocomplcache_fuzzy_completion_start_length = 1
+  "Plugin 'Shougo/neocomplcache'
+  "  " Bundle 'Shougo/neocomplcache-snippets-complete'
+  "  Plugin 'ujihisa/neco-ruby'
+  "  let g:neocomplcache_enable_at_startup = 1
+  "  let g:neocomplcache_enable_smart_case = 1
+  "  let g:neocomplcache_enable_auto_select = 1
+  "  let g:neocomplcache_enable_fuzzy_completion = 1
+  "  let g:neocomplcache_fuzzy_completion_start_length = 1
 
-    " Recommended key-mappings.
-    " <C-h>, <BS>: close popup and delete backword char.
-    inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-    inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-    inoremap <expr><C-y>  neocomplcache#close_popup()
-    inoremap <expr><C-f>  neocomplcache#close_popup()
-    inoremap <expr><C-e>  neocomplcache#cancel_popup()
+  "  " Recommended key-mappings.
+  "  " <C-h>, <BS>: close popup and delete backword char.
+  "  inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
+  "  inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+  "  inoremap <expr><C-y>  neocomplcache#close_popup()
+  "  inoremap <expr><C-f>  neocomplcache#close_popup()
+  "  inoremap <expr><C-e>  neocomplcache#cancel_popup()
 
-    " http://stackoverflow.com/questions/12975098/using-neocomplcache-and-clang-complete
-    if !exists('g:neocomplcache_force_omni_patterns')
-        let g:neocomplcache_force_omni_patterns = {}
-    endif
-    let g:neocomplcache_force_overwrite_completefunc = 1
-    let g:neocomplcache_force_omni_patterns.c =
-                \ '[^.[:digit:] *\t]\%(\.\|->\)'
-    let g:neocomplcache_force_omni_patterns.cpp =
-                \ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-    let g:neocomplcache_force_omni_patterns.objc =
-                \ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-    let g:neocomplcache_force_omni_patterns.objcpp =
-                \ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-    let g:clang_complete_auto = 0
-    let g:clang_auto_select = 0
-    let g:clang_use_library = 1
+  "  " http://stackoverflow.com/questions/12975098/using-neocomplcache-and-clang-complete
+  "  if !exists('g:neocomplcache_force_omni_patterns')
+  "      let g:neocomplcache_force_omni_patterns = {}
+  "  endif
+  "  let g:neocomplcache_force_overwrite_completefunc = 1
+  "  let g:neocomplcache_force_omni_patterns.c =
+  "              \ '[^.[:digit:] *\t]\%(\.\|->\)'
+  "  let g:neocomplcache_force_omni_patterns.cpp =
+  "              \ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+  "  let g:neocomplcache_force_omni_patterns.objc =
+  "              \ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+  "  let g:neocomplcache_force_omni_patterns.objcpp =
+  "              \ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+  "  let g:clang_complete_auto = 0
+  "  let g:clang_auto_select = 0
+  "  let g:clang_use_library = 1
 
   inoremap j{ <Space>{<Space><Space>}<Left><Left>
   inoremap jl =
