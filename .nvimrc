@@ -1,9 +1,4 @@
 " === Important ===
-  " set guicolors
-  " Necessary for true color support:
-  " :h xterm-true-color
-  "  execute "set t_8f=\e[38;2;%lu;%lu;%lum"
-  "  execute "set t_8b=\e[48;2;%lu;%lu;%lum"
   let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 
   syntax on
@@ -27,11 +22,6 @@
 
 " === Moving around, searching and patterns ===
   Plugin 'ag.vim'
-
-  "Plugin 'easytree.vim'
-  "nnoremap <Leader>n :EasyTree<CR>
-  "let g:easytree_ignore_dirs = ['^bin', '^log', '^tmp', '^public', '^doc$', '^script']
-  "nmap <A-L> :exe ':EasyTree '.expand('%:p:h')<CR>
 
   " NERD tree
   Plugin 'The-NERD-tree'
