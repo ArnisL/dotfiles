@@ -28,12 +28,6 @@ imap kj <ESC>:w<CR>
 map <MiddleMouse> :E<CR>
 map <RightMouse> <Nop>
 
-" imap kj <ESC>:w<CR>:silent exec '!tmux send-keys -t 1 clear'<CR>:silent exec '!tmux send-keys -t 1 Enter'<CR>:silent exec '!tmux send-keys -t 1 rake'<CR>:silent exec '!tmux send-keys -t 1 Enter'<CR>
-
-" :imap kj <ESC>:w<CR>:silent exec '!tmux send-keys -t 1 clear'<CR>:silent exec '!tmux send-keys -t 1 Enter'<CR>:silent exec '!tmux send-keys -t 1 "spring rspec --tag=focus"'<CR>:silent exec '!tmux send-keys -t 1 Enter'<CR>
-
-:map <Leader><CR> :!tmux send-keys -t 1 clear<CR>:!tmux send-keys -t 1 Enter<CR>:!tmux send-keys -t 1 'spring rspec --tag=focus'<CR>:!tmux send-keys -t 1 Enter<CR>
-
 call plug#begin()
 Plug 'arcticicestudio/nord-vim'
 Plug 'elmindreda/vimcolors'
