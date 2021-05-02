@@ -1,7 +1,1 @@
-# Dev environment
-
-Arch Linux
-
-```
-pacaur -S tmux neovim ripgrep
-```
+i like turtles

@@ -1,45 +1,49 @@
-set backspace=2
-set softtabstop=2
-set shiftwidth=2
-set tabstop=2
-set expandtab
-set nu
-set autoindent
+" :source $MYVIMRC
 
-" https://vi.stackexchange.com/questions/10382/strange-behavior-between-autochdir-and-netrw
-" set autochdir
+call plug#begin()
+Plug 'Badacadabra/vim-archery'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'evidens/vim-twig'
+Plug 'plasticboy/vim-markdown'
+Plug 'pangloss/vim-javascript'
+Plug 'elzr/vim-json'
+call plug#end()
 
-set sessionoptions+=folds
+set termguicolors
 
+colorscheme archery
+hi Normal ctermbg=none
+
+set number
+
+set updatetime=100
+
+set undodir=~/.vim/undodir
 set undofile
-set undodir=$HOME/.config/nvim/undo
 set undolevels=1000
 set undoreload=10000
 
-set termguicolors
-hi Search ctermfg=black ctermbg=yellow
+set backspace=2
+set softtabstop=2
+set tabstop=2
+set shiftwidth=2
+set expandtab
+set nu
+set autoindent
+set sessionoptions+=folds
 syntax enable
-colorscheme blue
 
-" Open netrw splits to the right
-let g:netrw_altv=1
+hi SignColumn ctermbg=none guibg=none
+hi LineNr guibg=none
 
-imap kj <ESC>:w<CR>
-map <MiddleMouse> :E<CR>
-map <RightMouse> <Nop>
-
-call plug#begin()
-Plug 'arcticicestudio/nord-vim'
-Plug 'elmindreda/vimcolors'
-Plug 'keith/rspec.vim'
-Plug 'airblade/vim-gitgutter'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'tpope/vim-cucumber'
-call plug#end()
-
-" colorscheme nord
-colorscheme phosphor
-hi TabLine guibg=#001000
-hi TabLine guifg=gray
-let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
-hi Folded guibg=none
+hi GitGutterAdd    gui=bold guifg=#00FE00 guibg=none ctermfg=2 cterm=bold
+hi GitGutterChange gui=bold guifg=#ffff00 guibg=none ctermfg=3 cterm=bold
+hi GitGutterDelete gui=bold guifg=#ff2222 guibg=none ctermfg=1 cterm=bold
+hi Search          gui=none guifg=black   guibg=yellow ctermbg=yellow ctermfg=black
+hi MatchParen   cterm=none ctermbg=none ctermfg=yellow gui=bold guibg=none guifg=yellow
+hi TabLine      cterm=none ctermfg=gray ctermbg=none gui=none guifg=none guibg=none
+hi TabLineFill  cterm=none ctermfg=none ctermbg=none gui=none guifg=none guibg=none
+hi TabLineSel   cterm=none ctermfg=none ctermbg=none gui=bold guifg=white guibg=none
