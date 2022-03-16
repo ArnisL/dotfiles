@@ -10,6 +10,8 @@ Plug 'evidens/vim-twig'
 Plug 'plasticboy/vim-markdown'
 Plug 'pangloss/vim-javascript'
 Plug 'elzr/vim-json'
+Plug 'godlygeek/tabular'
+Plug 'chrisbra/Colorizer'
 call plug#end()
 
 set termguicolors
@@ -32,9 +34,12 @@ set tabstop=2
 set shiftwidth=2
 set expandtab
 set nu
-set autoindent
+" set autoindent
 set sessionoptions+=folds
 syntax enable
+
+
+let g:colorizer_auto_color = 1
 
 hi SignColumn ctermbg=none guibg=none
 hi LineNr guibg=none
@@ -47,3 +52,19 @@ hi MatchParen   cterm=none ctermbg=none ctermfg=yellow gui=bold guibg=none guifg
 hi TabLine      cterm=none ctermfg=gray ctermbg=none gui=none guifg=none guibg=none
 hi TabLineFill  cterm=none ctermfg=none ctermbg=none gui=none guifg=none guibg=none
 hi TabLineSel   cterm=none ctermfg=none ctermbg=none gui=bold guifg=white guibg=none
+
+hi Normal guibg=none
+hi Folded guibg=none
+hi VertSplit guibg=none
+hi StatusLineNC guibg=none
+
+
+:echo synIDattr(synIDtrans(synID(line("."), col("."), 1)), "fg")
+
+cnoreabbrev GetFgColor echo synIDattr(synIDtrans(synID(line("."), 
+		\ col("."), 1)), "fg")
+
+
+hi Comment cterm=italic ctermfg=7 ctermbg=NONE gui=italic guifg=silver guibg=NONE
+hi Special cterm=NONE ctermfg=7 ctermbg=NONE gui=NONE guifg=darkgray guibg=NONE
+hi Identifier cterm=NONE ctermfg=6 ctermbg=NONE gui=NONE guifg=#006596 guibg=NONE
